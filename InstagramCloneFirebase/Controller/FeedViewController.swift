@@ -18,7 +18,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     let fireStoreDatabase = Firestore.firestore()
     // For posts delete
     var takePostUID: String?
-    var userEmailArray = [String]()
+    var userIdArray = [String]()
     var commentArray = [String]()
     var likeArray = [Int]()
     var userImageArray = [String]()
@@ -58,7 +58,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.makeAlert(title: "Error", message: error?.localizedDescription ?? "Error")
             }else{
                 if snapshot?.isEmpty != true && snapshot != nil {
-                    self.userEmailArray.removeAll(keepingCapacity: false)
+                    self.userIdArray.removeAll(keepingCapacity: false)
                     self.commentArray.removeAll(keepingCapacity: false)
                     self.likeArray.removeAll(keepingCapacity: false)
                     self.userImageArray.removeAll(keepingCapacity: false)
@@ -70,7 +70,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
                         let documentID = document.documentID
                         self.documentIdArray.append(documentID)
                         if let postedBy = document.get("postedBy") as? String{
-                            self.userEmailArray.append(postedBy)
+                            self.userIdArray.append(postedBy)
                             
                             if let postComment = document.get("postComment") as? String{
                                 self.commentArray.append(postComment)
@@ -96,12 +96,12 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return userEmailArray.count
+        return userIdArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! FeedCell
-        cell.userEmailLabel.text = userNameArray[indexPath.row]
+        cell.userIdLabel.text = userNameArray[indexPath.row]
         cell.commentLabel.text = commentArray[indexPath.row]
         cell.likeLabel.text = String(likeArray[indexPath.row])
         cell.userImageView.sd_setImage(with: URL(string: self.userImageArray[indexPath.row]))
@@ -115,7 +115,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         let alert = UIAlertController(title: "Edit", message: "What do you want?", preferredStyle: .actionSheet)
         let cancelButton = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         let deleteButton = UIAlertAction(title: "Delete", style: .destructive) { UIAlertAction in
-            for id in self.userEmailArray{
+            for id in self.userIdArray{
                 if currentUserID == id{
                     self.fireStoreDatabase.collection("Posts").document(self.takePostUID!).delete()
                     self.tableView.reloadData()

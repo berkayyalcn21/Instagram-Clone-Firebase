@@ -14,7 +14,7 @@ class FeedCell: UITableViewCell {
     var userEmailArray = [String]()
     let fireStoreDatabase = Firestore.firestore()
     
-    @IBOutlet weak var userEmailLabel: UILabel!
+    @IBOutlet weak var userIdLabel: UILabel!
     @IBOutlet weak var commentLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var likeLabel: UILabel!
