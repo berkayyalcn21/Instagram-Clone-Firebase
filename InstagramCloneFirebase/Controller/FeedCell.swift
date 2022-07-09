@@ -8,13 +8,16 @@
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
+import FirebaseStorage
 
 class FeedCell: UITableViewCell {
     
-    var userEmailArray = [String]()
     let fireStoreDatabase = Firestore.firestore()
+    var post: Post?
+    var feedVC: FeedViewController!
+    var index: Int!
     
-    @IBOutlet weak var userIdLabel: UILabel!
+    @IBOutlet weak var userEmailLabel: UILabel!
     @IBOutlet weak var commentLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var likeLabel: UILabel!
@@ -26,10 +29,20 @@ class FeedCell: UITableViewCell {
         // Initialization code
     }
     
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    func fill(post: Post) {
+        self.post = post
+        userEmailLabel.text = post.userName
+        commentLabel.text = post.comment
+        likeLabel.text = String(post.likes ?? 0)
+        userImageView.sd_setImage(with: URL(string: post.imageUrl ?? ""))
+        documentIdLabel.text = post.postId
+        let currentUserID = Auth.auth().currentUser?.uid
+        if currentUserID != post.userId {
+            optionButton.isHidden = true
+        }else{
+            optionButton.isHidden = false
+        }
     }
 
     @IBAction func likeButtonClicked(_ sender: Any) {
@@ -38,6 +51,28 @@ class FeedCell: UITableViewCell {
             let likeStore = ["likes": likeCount + 1] as [String: Any]
             fireStoreDatabase.collection("Posts").document(documentIdLabel.text!).setData(likeStore, merge: true)
         }
+    }
+    
+    @IBAction func optionButtonClicked(_ sender: Any) {
+        let alert = UIAlertController(title: "Edit", message: "What do you want?", preferredStyle: .actionSheet)
+        let cancelButton = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let deleteButton = UIAlertAction(title: "Delete", style: .destructive) { UIAlertAction in
+            self.fireStoreDatabase.collection("Posts").document((self.post?.postId)!).delete()
+
+            let storage = Storage.storage()
+            let storageRef = storage.reference()
+            let deleteImage = storageRef.child("media/").child("\((self.post?.imageId)!).jpg")
+            
+            deleteImage.delete { error in
+                if error != nil {
+                }else{
+                }
+            }
+              
+        }
+        alert.addAction(cancelButton)
+        alert.addAction(deleteButton)
+        self.feedVC.present(alert, animated: true)
     }
     
     

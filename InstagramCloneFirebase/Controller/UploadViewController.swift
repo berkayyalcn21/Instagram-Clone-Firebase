@@ -59,6 +59,7 @@ class UploadViewController: UIViewController, UIImagePickerControllerDelegate, U
     }
     
     @IBAction func uploadButtonClicked(_ sender: Any) {
+        uploadButton.isEnabled = false
         // References determine which folder we work in and where I save it.
         let storage = Storage.storage()
         let storageReference = storage.reference()
@@ -68,23 +69,26 @@ class UploadViewController: UIViewController, UIImagePickerControllerDelegate, U
             // For photos different names
             let uuid = UUID().uuidString
             let imageReference = mediaFolder.child("\(uuid).jpg")
+            
             imageReference.putData(data, metadata: nil) { metadata, error in
-                if error != nil{
+                if error != nil {
                     self.makeAlert(title: "Error", message: error?.localizedDescription ?? "Error")
-                }else{
+                }else {
                     imageReference.downloadURL { url, error in
-                        if error == nil{
+                        if error == nil {
                             let imageUrl = url?.absoluteString
                             // DATABASE
                             var firestoreReference : DocumentReference? = nil
-                            let firestorePost = ["imageUrl": imageUrl!, "postedBy": Auth.auth().currentUser!.uid, "postComment": self.commentText.text!, "date": FieldValue.serverTimestamp(), "likes": 0, "postedByUserName": self.userName!] as [String : Any]
+                            let firestorePost = ["imageUrl": imageUrl!, "postedBy": Auth.auth().currentUser!.uid, "postComment": self.commentText.text!, "date": FieldValue.serverTimestamp(), "likes": 0, "postedByUserName": self.userName!, "imageID": uuid] as [String : Any]
                             firestoreReference = self.firestoreDatabase.collection("Posts").addDocument(data: firestorePost, completion: { error in
-                                if error != nil{
+                                if error != nil {
                                     self.makeAlert(title: "Error", message: error?.localizedDescription ?? "Error")
-                                }else{
+                                    self.uploadButton.isEnabled = true
+                                }else {
                                     self.imageView.image = UIImage(systemName: "photo")
                                     self.commentText.text = ""
                                     self.tabBarController?.selectedIndex = 0
+                                    self.uploadButton.isEnabled = true
                                 }
                             })
                         }

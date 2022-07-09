@@ -10,20 +10,20 @@ import FirebaseFirestore
 import SDWebImage
 import FirebaseAuth
 
-class FeedViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class FeedViewController: UIViewController {
     
     
     @IBOutlet weak var tableView: UITableView!
     
     let fireStoreDatabase = Firestore.firestore()
     // For posts delete
-    var takePostUID: String?
-    var userIdArray = [String]()
+    var userEmailArray = [String]()
     var commentArray = [String]()
     var likeArray = [Int]()
     var userImageArray = [String]()
     var documentIdArray = [String]()
     var userNameArray = [String]()
+    var posts: [Post] = [Post]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +36,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         // For toggle keyboard
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
-        view.addGestureRecognizer(gestureRecognizer)
+        view.addGestureRecognizer(gestureRecognizer)  
         
     }
     
@@ -58,76 +58,42 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.makeAlert(title: "Error", message: error?.localizedDescription ?? "Error")
             }else{
                 if snapshot?.isEmpty != true && snapshot != nil {
-                    self.userIdArray.removeAll(keepingCapacity: false)
-                    self.commentArray.removeAll(keepingCapacity: false)
-                    self.likeArray.removeAll(keepingCapacity: false)
-                    self.userImageArray.removeAll(keepingCapacity: false)
-                    self.documentIdArray.removeAll(keepingCapacity: false)
-                    self.userNameArray.removeAll(keepingCapacity: false)
+                    self.posts.removeAll(keepingCapacity: false)
                     
                     for document in snapshot!.documents {
                         // Posts IDs
                         let documentID = document.documentID
                         self.documentIdArray.append(documentID)
-                        if let postedBy = document.get("postedBy") as? String{
-                            self.userIdArray.append(postedBy)
+                        if let postedBy = document.get("postedBy") as? String,
+                           let postComment = document.get("postComment") as? String,
+                           let likes = document.get("likes") as? Int,
+                           let imageUrl = document.get("imageUrl") as? String,
+                           let postedByUserName = document.get("postedByUserName") as? String,
+                           let imageId = document.get("imageID") as? String {
                             
-                            if let postComment = document.get("postComment") as? String{
-                                self.commentArray.append(postComment)
-                                
-                                if let likes = document.get("likes") as? Int{
-                                    self.likeArray.append(likes)
-                                    
-                                    if let imageUrl = document.get("imageUrl") as? String{
-                                        self.userImageArray.append(imageUrl)
-                                        
-                                        if let postedByUserName = document.get("postedByUserName") as? String{
-                                            self.userNameArray.append(postedByUserName)
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                            let post = Post(postId: documentID, userId: postedBy, comment: postComment, userName: postedByUserName, likes: likes, imageUrl: imageUrl, imageId: imageId)
+                            self.posts.append(post)
+                            print("\(imageId).jpg")
+                        }   
                     }
                     self.tableView.reloadData()
                 }
             }
         }
     }
+}
+
+extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return userIdArray.count
+        return posts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! FeedCell
-        cell.userIdLabel.text = userNameArray[indexPath.row]
-        cell.commentLabel.text = commentArray[indexPath.row]
-        cell.likeLabel.text = String(likeArray[indexPath.row])
-        cell.userImageView.sd_setImage(with: URL(string: self.userImageArray[indexPath.row]))
-        cell.documentIdLabel.text = documentIdArray[indexPath.row]
-        takePostUID = cell.documentIdLabel.text
+        cell.fill(post: posts[indexPath.row])
+        cell.feedVC = self
+        cell.index = indexPath.row
         return cell
     }
-    
-    @IBAction func optionsButton(_ sender: Any){
-        let currentUserID = Auth.auth().currentUser?.uid
-        let alert = UIAlertController(title: "Edit", message: "What do you want?", preferredStyle: .actionSheet)
-        let cancelButton = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let deleteButton = UIAlertAction(title: "Delete", style: .destructive) { UIAlertAction in
-            for id in self.userIdArray{
-                if currentUserID == id{
-                    self.fireStoreDatabase.collection("Posts").document(self.takePostUID!).delete()
-                    self.tableView.reloadData()
-                }else{
-                    self.makeAlert(title: "Error", message: "This post not your.")
-                }
-            }
-        }
-        alert.addAction(cancelButton)
-        alert.addAction(deleteButton)
-        present(alert, animated: true)
-    }
-
-
 }
