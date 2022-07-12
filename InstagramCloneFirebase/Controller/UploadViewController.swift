@@ -18,6 +18,7 @@ class UploadViewController: UIViewController, UIImagePickerControllerDelegate, U
     @IBOutlet weak var uploadButton: UIButton!
     
     var userName: String?
+    var likeControlArray: [String]?
     
     // DATABASE
     let firestoreDatabase = Firestore.firestore()
@@ -79,7 +80,7 @@ class UploadViewController: UIViewController, UIImagePickerControllerDelegate, U
                             let imageUrl = url?.absoluteString
                             // DATABASE
                             var firestoreReference : DocumentReference? = nil
-                            let firestorePost = ["imageUrl": imageUrl!, "postedBy": Auth.auth().currentUser!.uid, "postComment": self.commentText.text!, "date": FieldValue.serverTimestamp(), "likes": 0, "postedByUserName": self.userName!, "imageID": uuid] as [String : Any]
+                            let firestorePost = ["imageUrl": imageUrl!, "postedBy": Auth.auth().currentUser!.uid, "postComment": self.commentText.text!, "date": FieldValue.serverTimestamp(), "likes": 0, "postedByUserName": self.userName!, "imageID": uuid, "likeControl": self.likeControlArray ?? [""]] as [String : Any]
                             firestoreReference = self.firestoreDatabase.collection("Posts").addDocument(data: firestorePost, completion: { error in
                                 if error != nil {
                                     self.makeAlert(title: "Error", message: error?.localizedDescription ?? "Error")

@@ -15,6 +15,7 @@ class Post {
     var comment: String?
     var userName: String?
     var likes: Int?
+    var likeControl: [String]?
     var imageUrl: String?
     var imageId: String?
     
@@ -22,12 +23,13 @@ class Post {
         
     }
     
-    init(postId: String, userId: String, comment: String, userName: String, likes: Int, imageUrl: String, imageId: String) {
+    init(postId: String, userId: String, comment: String, userName: String, likes: Int, likeControl: [String], imageUrl: String, imageId: String) {
         self.postId = postId
         self.userId = userId
         self.comment = comment
         self.userName = userName
         self.likes = likes
+        self.likeControl = likeControl
         self.imageUrl = imageUrl
         self.imageId = imageId
     }

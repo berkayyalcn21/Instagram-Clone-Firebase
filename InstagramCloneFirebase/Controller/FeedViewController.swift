@@ -36,7 +36,7 @@ class FeedViewController: UIViewController {
         
         // For toggle keyboard
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
-        view.addGestureRecognizer(gestureRecognizer)  
+        view.addGestureRecognizer(gestureRecognizer)
         
     }
     
@@ -69,11 +69,11 @@ class FeedViewController: UIViewController {
                            let likes = document.get("likes") as? Int,
                            let imageUrl = document.get("imageUrl") as? String,
                            let postedByUserName = document.get("postedByUserName") as? String,
-                           let imageId = document.get("imageID") as? String {
+                           let imageId = document.get("imageID") as? String,
+                           let likeControl = document.get("likeControl") as? [String]{
                             
-                            let post = Post(postId: documentID, userId: postedBy, comment: postComment, userName: postedByUserName, likes: likes, imageUrl: imageUrl, imageId: imageId)
+                            let post = Post(postId: documentID, userId: postedBy, comment: postComment, userName: postedByUserName, likes: likes, likeControl: likeControl, imageUrl: imageUrl, imageId: imageId)
                             self.posts.append(post)
-                            print("\(imageId).jpg")
                         }   
                     }
                     self.tableView.reloadData()

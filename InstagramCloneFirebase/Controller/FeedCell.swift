@@ -16,13 +16,16 @@ class FeedCell: UITableViewCell {
     var post: Post?
     var feedVC: FeedViewController!
     var index: Int!
-    
+    var likeControl: Bool?
+    let currentUserID = Auth.auth().currentUser?.uid
+     
     @IBOutlet weak var userEmailLabel: UILabel!
     @IBOutlet weak var commentLabel: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var likeLabel: UILabel!
     @IBOutlet weak var documentIdLabel: UILabel!
     @IBOutlet weak var optionButton: UIButton!
+    @IBOutlet weak var likeButton: UIButton!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -37,19 +40,69 @@ class FeedCell: UITableViewCell {
         likeLabel.text = String(post.likes ?? 0)
         userImageView.sd_setImage(with: URL(string: post.imageUrl ?? ""))
         documentIdLabel.text = post.postId
-        let currentUserID = Auth.auth().currentUser?.uid
         if currentUserID != post.userId {
             optionButton.isHidden = true
         }else{
             optionButton.isHidden = false
         }
+        
+        var control = false
+        
+        for i in post.likeControl! {
+            if i == currentUserID {
+                control = true
+                print("Gördü")
+                break
+            }else {
+                control = false
+                print("Görmedi")
+            }
+        }
+        if control {
+            likeButton.setTitle("", for: .normal)
+            likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        }else {
+            likeButton.setTitle("", for: .normal)
+            likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+        }
     }
 
     @IBAction func likeButtonClicked(_ sender: Any) {
-        let fireStoreDatabase = Firestore.firestore()
-        if let likeCount = Int(likeLabel.text!){
-            let likeStore = ["likes": likeCount + 1] as [String: Any]
-            fireStoreDatabase.collection("Posts").document(documentIdLabel.text!).setData(likeStore, merge: true)
+        var control = false
+        if var likeControlList = post?.likeControl {
+            for userId in likeControlList {
+                if userId != currentUserID {
+                    control = true
+                }else{
+                    control = false
+                    break
+                }
+            }
+            if control {
+                let fireStoreDatabase = Firestore.firestore()
+                if let likeCount = Int(likeLabel.text!){
+                    let likeStore = ["likes": likeCount + 1] as [String: Any]
+                    fireStoreDatabase.collection("Posts").document(documentIdLabel.text!).setData(likeStore, merge: true)
+                  }
+                likeControlList.append(currentUserID!)
+                let liked = ["likeControl": likeControlList]
+                fireStoreDatabase.collection("Posts").document(documentIdLabel.text!).setData(liked, merge: true)
+                likeButton.setTitle("", for: .normal)
+                likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            }else {
+                let fireStoreDatabase = Firestore.firestore()
+                if let likeCount = Int(likeLabel.text!){
+                    let likeStore = ["likes": likeCount - 1] as [String: Any]
+                    fireStoreDatabase.collection("Posts").document(documentIdLabel.text!).setData(likeStore, merge: true)
+                  }
+                
+                let delete = likeControlList.filter { $0 != currentUserID}
+                let sendLikeControl = ["likeControl": delete]
+                fireStoreDatabase.collection("Posts").document(documentIdLabel.text!).setData(sendLikeControl, merge: true)
+
+                likeButton.setTitle("", for: .normal)
+                likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+            }
         }
     }
     

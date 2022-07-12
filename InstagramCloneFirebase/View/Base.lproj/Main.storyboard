@@ -150,12 +150,12 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kh8-Yi-GW4">
-                                                    <rect key="frame" x="10" y="334" width="77" height="31"/>
+                                                    <rect key="frame" x="10" y="334" width="95" height="31"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="77" id="eZl-wj-5tW"/>
+                                                        <constraint firstAttribute="width" constant="95" id="eZl-wj-5tW"/>
                                                     </constraints>
                                                     <state key="normal" title="Button"/>
-                                                    <buttonConfiguration key="configuration" style="plain" imagePlacement="trailing" title="Like">
+                                                    <buttonConfiguration key="configuration" style="plain" imagePlacement="trailing">
                                                         <imageReference key="image" image="heart" catalog="system" symbolScale="default"/>
                                                     </buttonConfiguration>
                                                     <connections>
@@ -211,6 +211,7 @@
                                         <connections>
                                             <outlet property="commentLabel" destination="2bt-8j-Eom" id="66a-q4-tT4"/>
                                             <outlet property="documentIdLabel" destination="X6K-hK-xFU" id="yN8-aX-gij"/>
+                                            <outlet property="likeButton" destination="Kh8-Yi-GW4" id="H5t-su-3TD"/>
                                             <outlet property="likeLabel" destination="r5b-hp-bEJ" id="76I-cf-z4D"/>
                                             <outlet property="optionButton" destination="kgC-d9-I94" id="lga-A2-Mnv"/>
                                             <outlet property="userEmailLabel" destination="nIT-2C-WfX" id="h0M-zL-9U4"/>
@@ -240,7 +241,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gX7-hn-pYV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1311.5942028985507" y="-443.30357142857139"/>
+            <point key="canvasLocation" x="1311.5942028985507" y="-474.10714285714283"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="18m-ce-LwA">
@@ -260,7 +261,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="j5I-lY-Amx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="151" y="-149"/>
+            <point key="canvasLocation" x="122" y="-149"/>
         </scene>
         <!--Intro View Controller-->
         <scene sceneID="4pY-Vf-twt">
@@ -332,7 +333,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bu6-86-QIq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3136.2318840579715" y="-149.33035714285714"/>
+            <point key="canvasLocation" x="-3797" y="-149"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="ZDg-YH-AgB">
@@ -383,7 +384,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ada-H4-tTD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1942" y="-179"/>
+            <point key="canvasLocation" x="-2426" y="-149"/>
         </scene>
         <!--Item-->
         <scene sceneID="tne-QT-ifu">
@@ -466,7 +467,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-794" y="-149"/>
+            <point key="canvasLocation" x="-1068" y="-149"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="i7B-Cd-JWW">
@@ -487,12 +488,12 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kBu-JU-BKr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2635" y="710"/>
+            <point key="canvasLocation" x="-3797" y="1026"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="spC-Fx-Lyr"/>
-        <segue reference="7Jx-Dr-mGZ"/>
+        <segue reference="oXO-0Y-H9q"/>
+        <segue reference="nnF-py-wD6"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="X - 2" width="375" height="812"/>
